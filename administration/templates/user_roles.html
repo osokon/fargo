@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block stylesheets %}
+<!-- Bootstrap Core and vandor -->
+<link rel="stylesheet" href="/static/dist/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/dropify/css/dropify.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/summernote/dist/summernote.css"/>
+<link rel="stylesheet" href="/static/dist/assets/plugins/sweetalert/sweetalert.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/datatable/dataTables.bootstrap4.min.css">
+
+{% endblock stylesheets%}
+
+
+{% block sidemenu %}
+<ul class="nk-menu">
+    <li class="nk-menu-heading">
+        <h6 class="overline-title text-primary-alt">Basic Links</h6>
+    </li><!-- .nk-menu-heading -->
+    <li class="nk-menu-item">
+        <a href="{% url 'classes' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-grid-plus"></em></span>
+            <span class="nk-menu-text">Classes</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'streams' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-grid-plus-fill"></em></span>
+            <span class="nk-menu-text">Streams</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'sessions' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-db-fill"></em></span>
+            <span class="nk-menu-text">Sessions (Year)</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'terms' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-db"></em></span>
+            <span class="nk-menu-text">Terms</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+      <a href="{% url 'promotion' %}" class="nk-menu-link">
+          <span class="nk-menu-icon"><em class="icon ni ni-trend-up"></em></span>
+          <span class="nk-menu-text">Promotion</span>
+      </a>
+  </li><!-- .nk-menu-item -->
+  <li class="nk-menu-item">
+    <a href="{% url 'sms_list' %}" class="nk-menu-link">
+        <span class="nk-menu-icon"><em class="icon ni ni-chat"></em></span>
+        <span class="nk-menu-text">SMS</span>
+    </a>
+</li><!-- .nk-menu-item -->
+    <li class="nk-menu-heading">
+        <h6 class="overline-title text-primary-alt">Admin Setup</h6>
+    </li><!-- .nk-menu-heading -->
+    <li class="nk-menu-item">
+        <a href="{% url 'users' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-user-circle-fill"></em></span>
+            <span class="nk-menu-text">Users</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'roles' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-shield-check-fill"></em></span>
+            <span class="nk-menu-text">User Roles</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'user_activities' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-activity-round-fill"></em></span>
+            <span class="nk-menu-text">User Activities</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    <li class="nk-menu-item">
+        <a href="{% url 'configs' %}" class="nk-menu-link">
+            <span class="nk-menu-icon"><em class="icon ni ni-setting-fill"></em></span>
+            <span class="nk-menu-text">Settings</span>
+        </a>
+    </li><!-- .nk-menu-item -->
+    
+</ul><!-- .nk-menu -->
+
+{% endblock sidemenu %}
+
+{% block content %}
+<div class="nk-block-head">
+    <div class="nk-block-between">
+        <div class="nk-block-head-content">
+            <h3 class="nk-block-title page-title">User Roles </h3>
+            <div class="nk-block-des text-soft">
+                <p>Total roles: {{roles.count}}</p>
+            </div>
+        </div><!-- .nk-block-head-content -->
+        <div class="nk-block-head-content">
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-2">
+                       <li><a href="{% url 'add_group' %}" class="btn btn-icon btn-primary" data-toggle="tooltip" data-placement="top" title="Add User"><em class="icon ni ni-plus"></em></a></li>
+                    </ul>
+                </div>
+            </div><!-- .toggle-wrap -->
+        </div><!-- .nk-block-head-content -->
+    </div><!-- .nk-block-between -->
+</div> 
+            <div class="card card-preview">
+                <div class="card-inner">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap js-basic-example dataTable table-striped table_custom border-style spacing5">
+                        <thead class="text-warning">
+                            <tr>
+                                <th>S/N:</th>
+                                <th>Group Name</th>
+                                <th># of users</th>
+                                <th>Users</th>
+                                <th># of Permissions</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for group in roles %}
+                            <tr class='clickable-row' data-href="{% url 'user_profile' user.id %}">
+                                <td>{{ forloop.counter}}</td>
+                                <td>{{group.name}} </td>
+                                <td>{{group.user_set.all.count}}</td>
+                                <td class="w60">
+                                    {% for user in group.user_set.all %}
+                                    <span>{{user.get_full_name|title}}</span><br>
+                                    {% endfor %}
+                                </td>
+                                <td>{{group.permissions.count}}</td>
+                                <td>Active</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+<!-- Start Plugin Js -->
+<script src="/static/dist/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="/static/dist/assets/plugins/dropify/js/dropify.min.js"></script>
+<script src="/static/dist/assets/bundles/summernote.bundle.js"></script>
+<script src="/static/dist/assets/plugins/sweetalert/sweetalert.min.js"></script>
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/js/form/dropify.js"></script>
+<script src="/static/dist/assets/js/page/summernote.js"></script>
+<script src="/static/dist/assets/js/page/dialogs.js"></script>
+<!-- Start Plugin Js -->
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/bundles/dataTables.bundle.js"></script>
+<script src="/static/dist/assets/js/table/datatable.js"></script>
+
+{% endblock javascripts %}
+
+
+
+
+

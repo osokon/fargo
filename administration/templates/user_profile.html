@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% block sidemenu %}
+<!-- Payment section -->
+    
+<section class="pt-0">
+    <div class="container">
+        <div class="row">
+            <!-- Menu sidebar -->
+                <!-- Profile menu header -->
+                    <div class="py-3 py-lg-4">
+                        <div class="row align-items-center justify-content-center no-gutters text-lg-center">
+                            <div class="col-9 col-lg-12">
+                                <div class="d-flex flex-lg-column align-items-center">
+                                    <div class="pr-3 pr-lg-0">
+                                        <img src="/static/assets/images/demo/default.jpg" alt="" class="rounded-circle mb-lg-2 img-fluid" style="width: 60px;">
+                                    </div>
+                                    <div>
+                                        <div class="h5 m-0">{{user.get_full_name}}</div>
+                                        <div class="text-muted">{{user.email}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 d-lg-none text-right">
+                                <button class="btn btn-icon btn-primary btn-sm toggle-show" data-show="open-profile-sidebar">
+                                    <i class="icon icon-text-align-center"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Profile sidebar -->
+                    <ul class="nk-menu">
+                        <li class="nk-menu-heading">
+                            <h6 class="overline-title text-primary-alt">Basic</h6>
+                        </li><!-- .nk-menu-heading -->
+                        <li class="nk-menu-item">
+                            <a href="{% url 'users' %}" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users text-info"></em></span>
+                                <span class="nk-menu-text">Bio </span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a href="{% url 'roles' %}" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-shield-check-fill text-secondary"></em></span>
+                                <span class="nk-menu-text">Notifications </span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-heading">
+                            <h6 class="overline-title text-primary-alt">Dashboard</h6>
+                        </li><!-- .nk-menu-heading -->
+                        <li class="nk-menu-item">
+                            <a href="" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-check-fill text-success"></em></span>
+                                <span class="nk-menu-text">Leads</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a href="" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-cross-fill text-danger"></em></span>
+                                <span class="nk-menu-text text-danger">Clients</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a href="{% url 'users_filter' %}?is_active=False" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-cross-fill text-danger"></em></span>
+                                <span class="nk-menu-text text-danger">Follow Ups</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+
+                        <li class="nk-menu-heading">
+                            <h6 class="overline-title text-primary-alt">Access</h6>
+                        </li><!-- .nk-menu-heading -->
+                        <li class="nk-menu-item">
+                            <a href="{% url 'users_filter' %}?is_active=False" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-cross-fill text-danger"></em></span>
+                                <span class="nk-menu-text text-danger">Reset Password</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        <li class="nk-menu-item">
+                            <a href="{% url 'users_filter' %}?is_active=False" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-user-cross-fill text-danger"></em></span>
+                                <span class="nk-menu-text text-danger">Sign Out</span>
+                            </a>
+                        </li><!-- .nk-menu-item -->
+                        
+                    </ul><!-- .nk-menu -->
+                </div>
+            </div>
+        </section>
+            <!-- Payment content -->
+{% endblock sidemenu %}
+
+{% block width %}apps-only{% endblock %}
+{% block content %}
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="nk-block">
+                    <div class="card">
+                        <div class="card-aside-wrap">
+                            <div class="card-inner card-inner-lg">
+                                <div class="nk-block-head nk-block-head-lg">
+                                    <div class="nk-block-between">
+                                        <div class="nk-block-head-content">
+                                            <h4 class="nk-block-title">Personal Information</h4>
+                                        </div>
+                                        <div class="nk-block-head-content align-self-start d-lg-none">
+                                            <a href="#" class="toggle btn btn-icon btn-trigger mt-n1" data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
+                                        </div>
+                                    </div>
+                                </div><!-- .nk-block-head -->
+                                <div class="nk-block">
+                                    <div class="nk-data data-list">
+                                        <div class="data-head">
+                                            <h6 class="overline-title">Basics</h6>
+                                        </div>
+                                        <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                            <div class="data-col">
+                                                <span class="data-label">Full Name</span>
+                                                <span class="data-value">{{user.employee_user.first_name}} {{user.employee_user.middle_name}} {{user.employee_user.surname}}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                        </div><!-- data-item -->
+                                        <div class="data-item">
+                                            <div class="data-col">
+                                                <span class="data-label">Display Name</span>
+                                                <span class="data-value">{{user.username}}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                        </div><!-- data-item -->
+                                        <div class="data-item">
+                                            <div class="data-col">
+                                                <span class="data-label">Email</span>
+                                                <span class="data-value">{{user.email}}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more disable"><em class="icon ni ni-lock-alt"></em></span></div>
+                                        </div><!-- data-item -->
+                                        <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                            <div class="data-col">
+                                                <span class="data-label">Phone Number</span>
+                                                <span class="data-value text-soft">{{user.employee_user.primary_phone}} {% if user.employee_user.secondary_phone %} <br>{{ user.employee_user.secondary_phone }} {% endif %}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                        </div><!-- data-item -->
+                                        <div class="data-item" data-toggle="modal" data-target="#profile-edit">
+                                            <div class="data-col">
+                                                <span class="data-label">Date of Birth</span>
+                                                <span class="data-value">{{user.employee_user.dob}}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                        </div><!-- data-item -->
+                                        <div class="data-item" data-toggle="modal" data-target="#profile-edit" data-tab-target="#address">
+                                            <div class="data-col">
+                                                <span class="data-label">Address</span>
+                                                <span class="data-value">{{user.employee_user.address}}</span>
+                                            </div>
+                                            <div class="data-col data-col-end"><span class="data-more"><em class="icon ni ni-forward-ios"></em></span></div>
+                                        </div><!-- data-item -->
+                                    </div><!-- data-list -->
+                                </div><!-- .nk-block -->
+                            </div>
+                            <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                                <div class="card-inner-group" data-simplebar>
+                                    <div class="card-inner">
+                                        <div class="user-card">
+                                            <div class="">
+                                                <div class="row align-items-center justify-content-center no-gutters text-lg-center">
+                                                    <div class="col-9 col-lg-12">
+                                                        <div class="d-flex flex-lg-column align-items-center">
+                                                            <div class="pr-3 pr-lg-0">
+                                                                <img src="/static/assets/images/demo/default.jpg" alt="" class="rounded-circle mb-lg-2 img-fluid" style="width: 60px;">
+                                                            </div>
+                                                            <div>
+                                                                <div class="h5 m-0">{{user.get_full_name}}</div>
+                                                                <div class="text-muted">{{user.email}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3 d-lg-none text-right">
+                                                        <button class="btn btn-icon btn-primary btn-sm toggle-show" data-show="open-profile-sidebar">
+                                                            <i class="icon icon-text-align-center"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="user-action">
+                                                <div class="dropdown">
+                                                    <a class="btn btn-icon btn-trigger mr-n2" data-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
+                                                            <li><a href="#"><em class="icon ni ni-edit-fill"></em><span>Update Profile</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!-- .user-card -->
+                                    </div><!-- .card-inner -->
+                                    <div class="card-inner p-0">
+                                        <ul class="link-list-menu">
+                                            <li><a class="active" ><em class="icon ni ni-user-fill-c"></em><span>Personal Infomation</span></a></li>
+                                            <li><a ><em class="icon ni ni-bell-fill"></em><span>Notifications</span></a></li>
+                                            <li><a ><em class="icon ni ni-activity-round-fill"></em><span>Account Activity</span></a></li>
+                                            <li><a ><em class="icon ni ni-lock-alt-fill"></em><span>Security Settings</span></a></li>
+                                        </ul>
+                                    </div><!-- .card-inner -->
+                                    <div class="card-inner p-0">
+                                        <ul class="link-list-menu">
+                                            <li><a class="active" href=""><em class="icon ni ni-user-fill-c"></em><span>Leads</span></a></li>
+                                            <li><a href=""><em class="icon ni ni-bell-fill"></em><span>Clients</span></a></li>
+                                            <li><a href=""><em class="icon ni ni-activity-round-fill"></em><span>Followups</span></a></li>
+                                        </ul>
+                                    </div><!-- .card-inner -->
+                                </div><!-- .card-inner-group -->
+                            </div><!-- card-aside -->
+                        </div><!-- .card-aside-wrap -->
+                    </div><!-- .card -->
+                </div><!-- .nk-block -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- @@ Profile Edit Modal @e -->
+<div class="modal fade" tabindex="-1" role="dialog" id="profile-edit">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
+            <div class="modal-body modal-body-lg">
+                <h5 class="title">Update Profile</h5>
+                <ul class="nk-nav nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#personal">Personal</a>
+                    </li>
+                </ul><!-- .nav-tabs -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="personal">
+                        <div class="row gy-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name">First Name</label>
+                                    <input type="text" class="form-control form-control-lg" id="first-name" value="{{user.employee_user.first_name}}" placeholder="Enter First name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name">Middle Name</label>
+                                    <input type="text" class="form-control form-control-lg" id="middle-name" value="{{user.employee_user.middle_name}}" placeholder="Enter Middle name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name">Surname</label>
+                                    <input type="text" class="form-control form-control-lg" id="surname" value="{{user.employee_user.surname}}" placeholder="Enter Surname">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone-no">Primary Phone Number</label>
+                                    <input type="text" class="form-control form-control-lg" id="primary_phone" value="{{user.employee_user.primary_phone}}" placeholder="Phone Number">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="phone-no">Secondary Phone Number</label>
+                                    <input type="text" class="form-control form-control-lg" id="secondary_phone" value="{{user.employee_user.secondary_phone}}" placeholder="Phone Number">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="birth-day">Date of Birth</label>
+                                    <input type="text" class="form-control form-control-lg date-picker" id="birth-day" placeholder="Enter your date of birth" value="{{user.employee_user.dob}}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="display-name">Address</label>
+                                    <input type="text" class="form-control form-control-lg" id="address" value="{{user.employee_user.address}}" placeholder="Enter Address">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <ul class="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
+                                    <li>
+                                        <a href="#" class="btn btn-lg btn-primary">Update Profile</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-dismiss="modal" class="link link-light">Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- .tab-content -->
+            </div><!-- .modal-body -->
+        </div><!-- .modal-content -->
+    </div><!-- .modal-dialog -->
+</div><!-- .modal -->
+{% endblock %}

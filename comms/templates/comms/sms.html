@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet" />
+    <link href="/static/dist-assets/css/themes/lite-purple.min.css" rel="stylesheet" />
+    <link href="/static/dist-assets/css/plugins/perfect-scrollbar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/dist-assets/css/plugins/datatables.min.css" />
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="main-content">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4>SMS</h4>
+            <p>Messages: {{sms.count}}</p>
+        </div>
+        <div class="col-md-6 text-right">
+            <a href="#" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#bulk_sms"><em class="icon ni ni-emails-fill"></em><span>Bulk SMS</span></a>
+            <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#manual_sms"><em class="icon ni ni-chat-fill"></em><span>Manual SMS</span></a>
+            <a href="{% url 'failed_sms' %}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Fetch Failed SMS due to credit (Today)"><em class="icon ni ni-report-fill"></em><span>Failed SMS</span></a>
+        </div>
+    </div>
+    <!-- end of row-->
+    <div class="row mb-4">
+        <div class="col-md-12 mb-4">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display table table-striped table-bordered" id="zero_configuration_table" style="width:100%">
+                            <thead class="text-warning">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Receiver</th>
+                                    <th>SMS</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sms in sms_list %}
+                                <tr>
+                                    <td>{{sms.id}}</td>
+                                    <td>{{sms.destination}}</td>
+                                    <td class="w-50">{{sms.text}}</td>
+                                    <td>
+                                        {{sms.delivery_status}}<br>
+                                        <small>Sent: {{sms.date}}</small>
+                                    </td>
+                                    <td>
+                                        {% if sms.delivery_status == 'REJECTED_NOT_ENOUGH_CREDITS' %}
+                                        <a href="{% url 'resend_single_failed_sms' sms.id %}" onclick="return confirm('Are you sure you want to resend this sms? SMS Charges will apply');" class="btn btn-outline-warning">Resend</a>
+                                        {% elif sms.delivery_status == 'Draft' %}
+                                        <button class="btn btn-outline-secondary" disabled>Resend</button>
+                                        {% else %}
+                                        <a href="{% url 'resend_sms' sms.id %}" onclick="return confirm('Are you sure you want to resend this sms? SMS Charges will apply');" class="btn btn-outline-secondary">Resend</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Manual SMS Modal -->
+<div class="modal fade" id="manual_sms" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Manual SMS</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              </button>
+          </div>
+        <form action="{% url 'manual_sms' %}" method="post">
+          {% csrf_token %}
+          <div class="modal-body">
+              <div class="form-group">
+                  <label for="basic-url" class="m-2">SMS Receiver</label>
+                  <div class="m-2">
+                    <input type="number" name='destination' id='destination' class="form-control" aria-describedby="basic-addon3" placeholder="Receiver" required>
+                    <small class="text-danger">Number must be in this format 2557XXXXXXXX </small>
+                  </div>
+              </div>
+              <div class="form-group">
+                <label for="basic-url" class="m-2">SMS</label>
+                <div class="m-2">
+                  <textarea name='text' class="form-control" rows="3" aria-describedby="basic-addon3" placeholder="Write Your Message here" required></textarea>
+                  
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button class="btn" data-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
+              <button type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+
+<!-- Bulk SMS Modal -->
+<div class="modal fade" id="bulk_sms" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Bulk SMS</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+          <form action="{% url 'manual_bulk_sms' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="basic-url" class="m-2">SMS Receivers</label>
+                    <div class="m-2">
+                      <select name="destinations" class="form-control" required>
+                          <option value="staffs">All Staffs</option>
+                          <option value="agents">All Agents</option>
+                          <option value="clients">All Clients</option>
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label for="basic-url" class="m-2">SMS</label>
+                  <div class="m-2">
+                    <textarea name='text' class="form-control" rows="3" aria-describedby="basic-addon3" placeholder="Write Your Message here" required></textarea>
+                    <small> Use the following variables to replace actual values <strong class="text-danger">{client}, {agent} and {staff}</strong></small>
+                  </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal"><i class="flaticon-cancel-12"></i> Discard</button>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+          </form>
+        </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script src="/static/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="/static/dist-assets/js/scripts/script.min.js"></script>
+    <script src="/static/dist-assets/js/scripts/sidebar-horizontal.script.js"></script>
+    <script src="/static/dist-assets/js/plugins/datatables.min.js"></script>
+    <script src="/static/dist-assets/js/scripts/datatables.script.min.js"></script>
+
+    <script>
+        showLoader();
+        window.addEventListener('load', hideLoader);
+    </script>
+{% endblock javascripts %}
+
+<!-- <div class="nk-block-head-content">
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-2">
+                        
+                        <li>
+                            <div class="dropdown">
+                                <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dot dot-primary"></div>
+                                    <em class="icon ni ni-filter-alt"></em>
+                                </a>
+                                <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                    <div class="dropdown-head">
+                                        <span class="sub-title dropdown-title">Filter Routes</span>
+                                        <div class="dropdown">
+                                            <a href="#" class="btn btn-sm btn-icon">
+                                                <em class="icon ni ni-more-h"></em>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-body dropdown-body-rg">
+                                        <form action="{% url 'sms_list' %}" method="get">
+                                        <div class="row gx-6 gy-3">
+                                          <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="overline-title overline-title-alt">Date (From)</label>
+                                                <input type="date" class="form-control" placeholder="Inclusive" name="date__gte">
+                                            </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Date (To)</label>
+                                                    <input type="date"  class="form-control" placeholder="Inclusive" name="date__lte" >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Recipient</label>
+                                                    <input type="number"  class="form-control" placeholder="Phone Number" name="destination" >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Delivery Status</label>
+                                                    <select class="form-control input-height" name="delivery_status__iexact" placeholder="Status" >
+                                                      <option selected value="">Select Delivery Status</option>
+                                                      {% for status in statuses %}
+                                                        <option value="{{status}}">{{status}}</option>
+                                                      {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-secondary">Filter</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li><a href="#" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#bulk_sms"><em class="icon ni ni-emails-fill"></em><span>Bulk SMS</span></a></li>
+                        <li><a href="#" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#manual_sms"><em class="icon ni ni-chat-fill"></em><span>Manual SMS</span></a></li>
+                        <li><a href="{% url 'failed_sms' %}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Fetch Failed SMS due to credit (Today)"><em class="icon ni ni-report-fill"></em><span>Failed SMS</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div> -->
+
+
+

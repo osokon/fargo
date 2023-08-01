@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block stylesheets %}
+<!-- Bootstrap Core and vandor -->
+<link rel="stylesheet" href="/static/dist/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/dropify/css/dropify.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/summernote/dist/summernote.css"/>
+<link rel="stylesheet" href="/static/dist/assets/plugins/sweetalert/sweetalert.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/datatable/dataTables.bootstrap4.min.css">
+
+{% endblock stylesheets%}
+
+
+{% block content %}
+<div class="nk-block-head">
+    <div class="nk-block-between">
+        <div class="nk-block-head-content">
+            <h3 class="nk-block-title page-title">User Activities </h3>
+            <div class="nk-block-des text-soft">
+                <p>Total user activities: {{activities.count}}</p>
+            </div>
+        </div><!-- .nk-block-head-content -->
+        <div class="nk-block-head-content">
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-2">
+                        
+                        <li>
+                            <div class="dropdown">
+                                <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dot dot-primary"></div>
+                                    <em class="icon ni ni-filter-alt"></em>
+                                </a>
+                                <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                    <div class="dropdown-head">
+                                        <span class="sub-title dropdown-title">Filter Routes</span>
+                                        <div class="dropdown">
+                                            <a href="#" class="btn btn-sm btn-icon">
+                                                <em class="icon ni ni-more-h"></em>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-body dropdown-body-rg">
+                                        <div class="row gx-6 gy-3">
+                                          <form action="" method="get"></form>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Role</label>
+                                                    <input data-provide="datepicker" data-date-autoclose="true" class="form-control" placeholder="Date" name="date" required data-date-format="yyyy-mm-dd">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Role</label>
+                                                    <select class="form-control input-height" name="class" placeholder="Class" required>
+                                                      <option selected value="">Select Class</option>
+                                                      {% for class in classes %}
+                                                        <option value="{{class.id}}">{{class}}</option>
+                                                      {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-secondary">Filter</button>
+                                                </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-foot between">
+                                        <a class="clickable" href="#">Reset Filter</a>
+                                    </div>
+                                </div><!-- .filter-wg -->
+                            </div><!-- .dropdown -->
+                        </li><!-- li -->
+                        <li><a href="" class="btn btn-white btn-outline-light"><em class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
+                    </ul>
+                </div>
+            </div><!-- .toggle-wrap -->
+        </div><!-- .nk-block-head-content -->
+    </div><!-- .nk-block-between -->
+</div> 
+            <div class="card card-preview">
+                <div class="card-inner">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap js-basic-example dataTable table-striped table_custom border-style spacing5">
+                        <thead class="text-warning">
+                            <tr>
+                                <th>S/N:</th>
+                                <th>Action</th>
+                                <th>Username</th>
+                                <th>IP Address</th>
+                                <th>Device Type</th>
+                                <th>Browser</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in activities %}
+                            <tr class='clickable-row' data-href="{% url 'user_profile' user.id %}">
+                                <td>{{ forloop.counter}}</td>
+                                <td>{{a.action|title}} </td>
+                                <td>{{a.username|title}}</td>
+                                <td>{{a.ip}}</td>
+                                <td>{{a.device_type}}: {{a.os_type}}</td>
+                                <td>{{a.browser_type}}</td>
+                                <td>{{a.time}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+<!-- Start Plugin Js -->
+<script src="/static/dist/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="/static/dist/assets/plugins/dropify/js/dropify.min.js"></script>
+<script src="/static/dist/assets/bundles/summernote.bundle.js"></script>
+<script src="/static/dist/assets/plugins/sweetalert/sweetalert.min.js"></script>
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/js/form/dropify.js"></script>
+<script src="/static/dist/assets/js/page/summernote.js"></script>
+<script src="/static/dist/assets/js/page/dialogs.js"></script>
+<!-- Start Plugin Js -->
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/bundles/dataTables.bundle.js"></script>
+<script src="/static/dist/assets/js/table/datatable.js"></script>
+
+{% endblock javascripts %}
+
+
+
+
+

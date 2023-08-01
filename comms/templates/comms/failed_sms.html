@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block stylesheets %}
+<!-- Bootstrap Core and vandor -->
+<link rel="stylesheet" href="/static/dist/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/dropify/css/dropify.min.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/summernote/dist/summernote.css"/>
+<link rel="stylesheet" href="/static/dist/assets/plugins/sweetalert/sweetalert.css">
+<link rel="stylesheet" href="/static/dist/assets/plugins/datatable/dataTables.bootstrap4.min.css">
+
+{% endblock stylesheets%}
+
+
+{% block content %}
+<div class="nk-block-head">
+    <div class="nk-block-between">
+        <div class="nk-block-head-content">
+            <h3 class="nk-block-title page-title">Failed Messages </h3>
+            <div class="nk-block-des text-soft">
+                <p>Total failed Messages today: {{sms_count}} <a class="text-danger">(Insufficient Credit)</a></p>
+            </div>
+        </div><!-- .nk-block-head-content -->
+        <div class="nk-block-head-content">
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-2">
+                        <li>
+                            <div class="dropdown">
+                                <a href="#" class="btn btn-trigger btn-icon dropdown-toggle" data-toggle="dropdown">
+                                    <div class="dot dot-primary"></div>
+                                    <em class="icon ni ni-filter-alt"></em>
+                                </a>
+                                <div class="filter-wg dropdown-menu dropdown-menu-xl dropdown-menu-right">
+                                    <div class="dropdown-head">
+                                        <span class="sub-title dropdown-title">Filter Routes</span>
+                                        <div class="dropdown">
+                                            <a href="#" class="btn btn-sm btn-icon">
+                                                <em class="icon ni ni-more-h"></em>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-body dropdown-body-rg">
+                                        <form action="{% url 'failed_sms' %}" method="get">
+                                        <div class="row gx-6 gy-3">
+                                          <div class="col-6">
+                                            <div class="form-group">
+                                                <label class="overline-title overline-title-alt">Date (From)</label>
+                                                <input type="date" class="form-control" placeholder="Inclusive" name="date__gte">
+                                            </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Date (To)</label>
+                                                    <input type="date"  class="form-control" placeholder="Inclusive" name="date__lte" >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label class="overline-title overline-title-alt">Recipient</label>
+                                                    <input type="number"  class="form-control" placeholder="Phone Number" name="destination" >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <button type="submit" class="btn btn-secondary">Filter</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div><!-- .filter-wg -->
+                            </div><!-- .dropdown -->
+                        </li><!-- li -->
+                        <li><a href="#" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#bulk_sms"><em class="icon ni ni-emails-fill"></em><span>Resend All</span></a></li>
+                        <li><a href="#" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#manual_sms"><em class="icon ni ni-chat-fill"></em><span>Resend Selected</span></a></li>
+                        <li><a href="{% url 'fetch_failed_sms' %}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Fetch failed sms today"><em class="icon ni ni-loader"></em><span>Fetch Today</span></a></li>
+                    </ul>
+                </div>
+            </div><!-- .toggle-wrap -->
+        </div><!-- .nk-block-head-content -->
+    </div><!-- .nk-block-between -->
+</div> 
+            <div class="card card-preview">
+                <div class="card-inner">
+                <div class="table-responsive">
+                    <form method="post" action="" id="reminders_form">{%csrf_token%}
+                    <table class="table table-hover js-basic-example dataTable table-striped">
+                        <thead class="text-warning">
+                          <tr>
+                            <th class="nk-tb-col nk-tb-col-check">
+                                <div class="custom-control custom-control-sm custom-checkbox notext">
+                                    <input type="checkbox" class="custom-control-input" id="flowcheckall">
+                                    <label class="custom-control-label" for="flowcheckall"></label>
+                                </div>
+                            </th>
+                            <th>ID</th>
+                            <th>Receiver</th>
+                            <th>SMS</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for sms in sms_list %}
+                            <tr>
+                                <td class="nk-tb-col nk-tb-col-check">
+                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                        <input type="checkbox" class="custom-control-input" id="{{ sms.id }}" name="sms" value="{{ sms.id}}" >
+                                        <label class="custom-control-label" for="{{ sms.id }}"></label>
+                                    </div>
+                                </td>
+                                <td>{{forloop.counter}}</td>
+                                <td>{{sms.destination}}</td>
+                                <td class="w-50">{{sms.text}}</td>
+                                <td>
+                                    {{sms.delivery_status}}<br>
+                                    <small>Sent: {{sms.date}}</small>
+                                </td>
+                                <td>
+                                    <a href="{% url 'resend_single_failed_sms' sms.id %}" onclick="return confirm('Are you sure you want to resend this sms? SMS Charges will apply');" class="btn btn-outline-warning">Resend</a>
+                                </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+
+<!-- Start Plugin Js -->
+<script src="/static/dist/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="/static/dist/assets/plugins/dropify/js/dropify.min.js"></script>
+<script src="/static/dist/assets/bundles/summernote.bundle.js"></script>
+<script src="/static/dist/assets/plugins/sweetalert/sweetalert.min.js"></script>
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/js/form/dropify.js"></script>
+<script src="/static/dist/assets/js/page/summernote.js"></script>
+<script src="/static/dist/assets/js/page/dialogs.js"></script>
+<!-- Start Plugin Js -->
+
+<!-- Start project main js  and page js -->
+<script src="/static/dist/assets/bundles/dataTables.bundle.js"></script>
+<script src="/static/dist/assets/js/table/datatable.js"></script>
+
+<script>
+
+    var form = document.getElementById("reminders_form");
+    console.log(form)
+      document.getElementById("reminders_btn").addEventListener("click", function () {
+        old_val = $('#msg_raw').val()
+        n_v = $('#msg').val()
+        $('#msg').val(old_val)
+        var new_val = $('#msg').val()
+        console.log(n_v);
+      form.submit();
+      });
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+       
+       oTableStaticFlow = $('#flow-table').DataTable({
+           "aoColumnDefs": [{
+               'bSortable': false,
+               'aTargets': [0]
+           }],
+       });
+   
+       $("#flowcheckall").click(function () {
+           //$('#flow-table tbody input[type="checkbox"]').prop('checked', this.checked);
+           var cols = oTableStaticFlow.column(0).nodes(),
+               state = this.checked;
+           
+           for (var i = 0; i < cols.length; i += 1) {
+               cols[i].querySelector("input[type='checkbox']").checked = state;
+           }
+       });
+   });
+   </script>
+{% endblock javascripts %}
+
+
+
+
+
