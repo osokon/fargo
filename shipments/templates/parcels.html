@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet" />
+    <link href="/static/dist-assets/css/themes/lite-purple.min.css" rel="stylesheet" />
+    <link href="/static/dist-assets/css/plugins/perfect-scrollbar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/dist-assets/css/plugins/datatables.min.css" />
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4>Parcels</h4>
+            <p>Count: {{parcels.count}}</p>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-info m-1 float-right bulk-actions" id="bulkActions" type="button" data-toggle="modal" data-target="#addShipmentModal">Add to Shipment</button>
+            <button class="btn btn-primary m-1 float-right" type="button" data-toggle="modal" data-target="#addParcelModal">New Parcel</button>
+        </div>
+    </div>
+    <!-- end of row-->
+    <div class="row mb-4">
+        <div class="col-md-12 mb-4">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <form method="post" action="{% url 'create_shipment' %}">
+                        <table class="display table table-striped table-bordered" id="zero_configuration_table" style="width:100%">
+                            <thead class="text-warning">
+                            <tr>
+                                <th class="text-center">
+                                    <!-- <label class="checkbox checkbox-outline-primary">
+                                        <input type="checkbox" /><span class="checkmark"></span>
+                                    </label> -->
+                                </th>
+                                <th>S/N:</th>
+                                <th>Owner Name</th>
+                                <th>Tracking No.</th>
+                                <th>Received (China)</th>
+                                <th>Shipped</th>
+                                <th>Delivered (TZ)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for parcel in parcels %}
+
+                            <tr>
+                                <td class="text-center">
+                                    {% if not parcel.shipment %}
+                                        <label class="checkbox checkbox-outline-primary">
+                                            <input type="checkbox" checked name="parcels" id="{{parcel.id}}" value="{{parcel.id}}" class="item-checkbox" /><span class="checkmark"></span>
+                                        </label>
+                                    {% endif %}
+                                </td>
+                                <td>{{ forloop.counter}}</td>
+                                <td>
+                                    {{parcel.owner}} 
+                                    <small><br>{{parcel.owner_mobile}}</small>
+                                </td>
+                                <td>
+                                    {{parcel.tracking_no}}
+                                    <small><br>Weight: {{parcel.weight}}</small>
+                                </td>
+                                <td>{{parcel.received_on}}</td>
+                                <td>{{parcel.shipped_on}}</td>
+                                <td>{{parcel.landed_on}}</td>
+                                <td>{{parcel.status}}</td>
+                                <td>
+                                    {% if parcel.status == 'In TZ WH' %}
+                                    <a href="{% url 'deliver_parcel' parcel.id %}" onclick="return confirm ('Please confirm the parcel has been delivered')" class="btn btn-success btn-sm">Deliver</a>
+                                    {% elif parcel.status == 'Delivered to Client' %}
+                                    <badge>Received by Client</badge>
+                                    {% else %}
+                                    <badge>Awaiting Shipment</badge>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col-md-3 mb-4">
+        <div class="card text-left">
+            <div class="card-body">
+                <h4>Filters</h4>
+            </div>
+        </div>
+    </div> -->
+</div>
+</div>
+
+
+<!--  Modal -->
+<div class="modal fade" id="addShipmentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle-2">Create new Shipment</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            
+                <div class="modal-body">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label class="col-form-label" for="recipient-name-2">Shipment No:</label>
+                        <input class="form-control" name="shipment_no" id="id_shipment_no" type="text" required/>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ml-2" >Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="/static/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/static/dist-assets/js/scripts/script.min.js"></script>
+<script src="/static/dist-assets/js/scripts/sidebar-horizontal.script.js"></script>
+<script src="/static/dist-assets/js/plugins/datatables.min.js"></script>
+<script src="/static/dist-assets/js/scripts/datatables.script.min.js"></script>
+
+<script>
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+    const bulkActions = document.getElementById('bulkActions');
+  
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateBulkActions);
+    });
+  
+    function updateBulkActions() {
+      const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+  
+      if (checkedCheckboxes.length > 0) {
+        bulkActions.style.display = 'block';
+      } else {
+        bulkActions.style.display = 'none';
+      }
+    }
+  
+    function performBulkAction(action) {
+      const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+  
+      if (checkedCheckboxes.length > 0) {
+        // Perform the selected bulk action here, such as deleting or moving items.
+        console.log(`Performing ${action} on ${checkedCheckboxes.length} items.`);
+      }
+    }
+  </script>
+{% endblock javascripts %}

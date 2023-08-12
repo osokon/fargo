@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>ShambaKijiji | CRM</title>
+    <title>Fargo | MIS</title>
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet" />
     <link href="/static/dist-assets/css/themes/lite-purple.css" rel="stylesheet" />
     <link href="/static/dist-assets/css/plugins/perfect-scrollbar.css" rel="stylesheet" />
@@ -15,6 +15,19 @@
 </head>
 
 <body class="text-left">
+    {% if messages %}
+    <ul class="messages">
+        {% for msg in messages %}
+        <li>
+            <div class="alert alert-{{msg.level_tag}}" role="alert">
+            {{msg.message}}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+
     <div class="app-admin-wrap layout-sidebar-vertical sidebar-full">
         <div class="sidebar-panel">
             <div class="gull-brand pr-3 text-center mt-4 mb-2 d-flex justify-content-center align-items-center"><img class="pl-3" src="/static/dist-assets/images/logo.png" alt="alt" />
@@ -27,44 +40,11 @@
                     <div class="main-menu">
                         <ul class="metismenu" id="menu">
                             <li class="Ul_li--hover"><a href="{% url 'dashboard' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Dashboard</span></a></li>
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Library text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Clients</span></a>
-                                <ul class="mm-collapse">
-                                    <li class="item-name"><a href="{% url 'leads' %}"><i class="nav-icon i-Bell1"></i><span class="item-name">Leads</span></a></li>
-                                    <li class="item-name"><a href="{% url 'clients' %}"><i class="nav-icon i-Bell1"></i><span class="item-name">Clients</span></a></li>
-                                    <li class="item-name"><a href="{% url 'clients' %}"><i class="nav-icon i-Bell1"></i><span class="item-name">Product Enrollments</span></a></li>
-                                    <li class="item-name"><a href="{% url 'enrollments' %}"><i class="nav-icon i-Bell1"></i><span class="item-name">Package Enrollments</span></a></li>
-                                    <li class="item-name"><a href="{% url 'payments' %}"><i class="nav-icon i-Bell1"></i><span class="item-name">Payments</span></a></li>
-                                </ul>
-                            </li>
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Suitcase text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Packages</span></a>
-                                <ul class="mm-collapse">
-                                    <li class="item-name"><a href="{% url 'products' %}"><i class="nav-icon i-Crop-2"></i><span class="item-name">Products</span></a></li>
-                                    <li class="item-name"><a href="{% url 'seasons' %}"><i class="nav-icon i-Loading-3"></i><span class="item-name">Agric Sessions</span></a></li>
-                                    <li class="item-name"><a href="{% url 'packages' %}"><i class="nav-icon i-Loading-2"></i><span class="item-name">Packages</span></a></li>
-                                </ul>
-                            </li>
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Analytics</span></a>
-                                <ul class="mm-collapse">
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Business-Mens"></i><span class="item-name">ETL</span></a></li>
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Add-File"></i><span class="item-name">Clients</span></a></li>
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Email"></i><span class="item-name">Enrollments</span></a></li>
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Speach-Bubble-3"></i><span class="item-name">Payments</span></a></li>
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Speach-Bubble-3"></i><span class="item-name">Deliveries</span></a></li>
-                                    <li class="item-name"><a href="#"><i class="nav-icon i-Speach-Bubble-3"></i><span class="item-name">SMS</span></a></li>
-                                </ul>
-                            </li>
-                            <li class="Ul_li--hover"><a href="{% url 'sms' %}"><i class="i-Bar-Chart text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">SMS</span></a></li>
-                            <!--  <p class="main-menu-title text-muted ml-3 font-weight-700 text-13 mt-4 mb-2">UI Elements</p> -->
-                            <li class="Ul_li--hover"><a class="has-arrow" href="#"><i class="i-Computer-Secure text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Administration</span></a>
-                                <ul class="mm-collapse">
-                                    <li class="item-name"><a href="{% url 'users' %}"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Users</span></a></li>
-                                    <li class="item-name"><a href="{% url 'roles' %}"><i class="nav-icon i-Receipt-4"></i><span class="item-name">User Roles</span></a></li>
-                                    <li class="item-name"><a href="{% url 'villages' %}"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Villages</span></a></li>
-                                    <li class="item-name"><a href="{% url 'users' %}"><i class="nav-icon i-Receipt-4"></i><span class="item-name">Targets </span></a></li>
-                                    <li class="item-name"><a href="{% url 'user_activities' %}"><i class="nav-icon i-Receipt-4"></i><span class="item-name">System Audit </span></a></li>
-                                </ul>
-                            </li>
-                            
+                            <li class="Ul_li--hover"><a href="{% url 'parcels' %}"><i class="i-Checkout text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Parcels</span></a></li>
+                            <li class="Ul_li--hover"><a href="{% url 'shipments' %}"><i class="i-Plane text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">Shipments</span></a></li>
+                            <li class="Ul_li--hover"><a href="{% url 'users' %}"><i class="i-Male text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">System Users</span></a></li>
+                            <li class="Ul_li--hover"><a href="{% url 'roles' %}"><i class="i-Unlock text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">User Roles</span></a></li>
+                            <li class="Ul_li--hover"><a href="{% url 'user_activities' %}"><i class="i-Firewall text-20 mr-2 text-muted"></i><span class="item-name text-15 text-muted">System Activities</span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -91,14 +71,16 @@
                         <div></div>
                         <div></div>
                         <div></div>
-                    </div><i class="i-Add-UserStar mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Todo"></i><i class="i-Speach-Bubble-3 mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Chat"></i><i class="i-Email mr-3 text-20 mobile-hide cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Inbox"></i><i class="i-Calendar-4 mr-3 mobile-hide text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Calendar"></i><i class="i-Checkout-Basket mobile-hide mr-3 text-20 cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Calendar"></i>
+                    </div><a type="button" class="i-Add-Cart mr-3 text-20 cursor-pointer" data-toggle="modal" data-target="#addParcelModal"></a>
                 </div>
                 <div class="header-part-right">
                     <!-- Full screen toggle--><i class="i-Full-Screen header-icon d-none d-sm-inline-block" data-fullscreen=""></i>
                     <!-- Grid menu Dropdown-->
-                    <div class="dropdown dropleft"><i class="i-Safe-Box text-muted header-icon" id="dropdownMenuButton" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                    <div class="dropdown dropleft"><i class="i-Checked-User text-muted header-icon" id="dropdownMenuButton" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <div class="menu-icon-grid"><a href="#"><i class="i-Shop-4"></i> Home</a><a href="#"><i class="i-Library"></i> UI Kits</a><a href="#"><i class="i-Drop"></i> Apps</a><a href="#"><i class="i-File-Clipboard-File--Text"></i> Forms</a><a href="#"><i class="i-Checked-User"></i> Sessions</a><a href="#"><i class="i-Ambulance"></i> Support</a></div>
+                            <div class="menu-icon-grid">
+                                <a href="/accounts/logout"><i class="i-Checked-User"></i> Logout</a>
+                                <a href="/change_password"><i class="i-Password"></i> Change Password</a></div>
                         </div>
                     </div>
                 </div>
@@ -119,7 +101,7 @@
                     <div class="d-flex align-items-center">
                         <img class="logo" src="/static/dist-assets/images/logo.png" alt="">
                         <div>
-                            <p class="m-0">&copy; <script>document.write(new Date().getFullYear()); </script> ShambaKijiji</p>
+                            <p class="m-0">&copy; <script>document.write(new Date().getFullYear()); </script> Fargo</p>
                             <p class="m-0">All rights reserved</p>
                         </div>
                     </div>
@@ -128,6 +110,51 @@
             <!-- fotter end -->
         </div>
     </div>
+
+
+
+    <!--  Modal -->
+    <div class="modal fade" id="addParcelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle-2">Add new Parcel</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <form method="post" action="{% url 'create_parcel' %}">
+                    <div class="modal-body">
+                        {%csrf_token%}
+                        <div class="form-group">
+                            <label class="col-form-label" for="recipient-name-2">Tracking No:</label>
+                            <input class="form-control" name="tracking_no" id="id_tracking_no" type="text" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="message-text-1">Owner Name:</label>
+                            <input class="form-control" name="owner" id="id_owner" type="text" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="message-text-1">Owner Mobile:</label>
+                            <input class="form-control" name="owner_mobile" id="id_owner_mobile" type="number" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="message-text-1">Parcel Weight (Kg):</label>
+                            <input class="form-control" name="weight" id="id_weight" type="number" placeholder="0.00 Kg" required/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="message-text-1">Date Received (China WH):</label>
+                            <input class="form-control" name="received_on" id="id_received_on" type="date" required/>
+                        </div>
+    
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary ml-2" >Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/dist-assets/js/plugins/jquery-3.3.1.min.js"></script>
     <script src="/static/dist-assets/js/plugins/bootstrap.bundle.min.js"></script>
     <script src="/static/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>

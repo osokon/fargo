@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,400i,600,700,800,900" rel="stylesheet" />
+    <link href="/static/dist-assets/css/themes/lite-purple.min.css" rel="stylesheet" />
+    <link href="/static/dist-assets/css/plugins/perfect-scrollbar.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/dist-assets/css/plugins/datatables.min.css" />
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h4>Shipments</h4>
+            <p>Count: {{shipments.count}}</p>
+        </div>
+        <div class="col-md-6">
+            <!-- <button class="btn btn-info m-1 float-right" type="button">Export (XLS)</button> -->
+        </div>
+    </div>
+    <!-- end of row-->
+    <div class="row mb-4">
+        <div class="col-md-12 mb-4">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display table table-striped table-bordered" id="zero_configuration_table" style="width:100%">
+                            <thead class="text-warning">
+                            <tr>
+                                <th>S/N:</th>
+                                <th>Shipment No.</th>
+                                <th>Shipped Date</th>
+                                <th># of Parcels</th>
+                                <th>Estimated Weight</th>
+                                <th>E.T.A</th>
+                                <th>Delivered Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for shipment in shipments %}
+                            <tr>
+                                <td>{{ forloop.counter}}</td>
+                                <td>
+                                    {{shipment.shipment_no}} 
+                                </td>
+                                <td>
+                                    {{shipment.shipped_on}}
+                                </td>
+                                <td>{{shipment.parcels_count}}</td>
+                                <td>{{shipment.estimated_weight}} Kg</td>
+                                <td>{{shipment.eta}}</td>
+                                <td>{{shipment.received_on}}</td>
+                                <td>{{shipment.status}}</td>
+                                <td>
+                                    {% if shipment.status  == 'Packed' %}
+                                    <button data-toggle="modal" data-target="#shipShipmentModal{{shipment.id}}" class="btn btn-info btn-sm">Ship</button>
+                                    {% elif shipment.status == 'Shipped' %}
+                                    <button data-toggle="modal" data-target="#receiveShipmentModal{{shipment.id}}" class="btn btn-success btn-sm">Receive</button>
+                                    {% else %}
+                                    <badge>Delivered</badge>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col-md-3 mb-4">
+        <div class="card text-left">
+            <div class="card-body">
+                <h4>Filters</h4>
+            </div>
+        </div>
+    </div> -->
+</div>
+</div>
+
+<!--  Modal -->
+{% for shipment in shipments %}
+<div class="modal fade" id="shipShipmentModal{{shipment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle-2">Ship Shipment</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form method="post" action="{% url 'ship_shipment' shipment.id %}">
+                <div class="modal-body">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label class="col-form-label" for="recipient-name-2">Shipped Date:</label>
+                        <input class="form-control" name="shipped_on" id="id_shipped_on" type="date" required/>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label" for="recipient-name-2">Estimated Arrival Date:</label>
+                        <input class="form-control" name="eta" id="id_eta" type="date" required/>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ml-2" >Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for shipment in shipments %}
+<div class="modal fade" id="receiveShipmentModal{{shipment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle-2">Ship Shipment</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <form method="post" action="{% url 'receive_shipment' shipment.id %}">
+                <div class="modal-body">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label class="col-form-label" for="recipient-name-2">Received Date:</label>
+                        <input class="form-control" name="received_on" id="id_received_on" type="date" required/>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ml-2" >Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}
+
+{% block javascripts %}
+<script src="/static/dist-assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/static/dist-assets/js/scripts/script.min.js"></script>
+<script src="/static/dist-assets/js/scripts/sidebar-horizontal.script.js"></script>
+<script src="/static/dist-assets/js/plugins/datatables.min.js"></script>
+<script src="/static/dist-assets/js/scripts/datatables.script.min.js"></script>
+{% endblock javascripts %}

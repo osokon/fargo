@@ -16,11 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from shipments.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('administration.urls')),
+    path('add_parcel', ParcelCreate.as_view(), name='create_parcel'),
+    path('deliver_parcel/<id>/', deliver_parcel, name='deliver_parcel'),
+    path('parcels', parcels, name='parcels'),
+    path('add_shipment', create_shipment, name='create_shipment'),
+    path('ship_shipment/<id>/', ship_shipment, name='ship_shipment'),
+    path('receive_shipment/<id>/', receive_shipment, name='receive_shipment'),
+    path('shipments', shipments, name='shipments'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
 	path('accounts/logout/', auth_views.LogoutView.as_view(),{'next': '/accounts/login'}),
+    path('change_password/', auth_views.PasswordChangeView.as_view(success_url=reverse_lazy('logout'), template_name='change_password.html')),
     
 ]

@@ -3,6 +3,8 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
+
+from shipments.models import Parcel, Shipment
 from .models import *
 from django.views.generic import CreateView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -134,5 +136,12 @@ def server_error(request):
 
 @login_required
 def dashboard(request):
+    pending_parcels = Parcel.objects.filter(status__iexact='In China WH').count()
+    packed_parcels = Parcel.objects.filter(status__iexact='Packed for Shipping').count()
+    shipped_parcels = Parcel.objects.filter(status__iexact='Shipped').count()
+    delivered_parcels = Parcel.objects.filter(status__iexact='In TZ WH').count()
 
+    packed_shipments = Shipment.objects.filter(status__iexact='Packed').count()
+    intransit_shipments = Shipment.objects.filter(status__iexact='Shipped').count()
+    delivered_shipments = Shipment.objects.filter(status__iexact='Received').count()
     return render(request, 'dashboard.html', locals())
